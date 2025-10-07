@@ -20,7 +20,7 @@ export class AuthService {
 
             if (!foundUser) return null;
 
-            const isPassword = await bcrypt.compare(user.password, foundUser.password);
+            const isPasswordValid = await bcrypt.compare(user.password, foundUser.password);
 
            if (!isPasswordValid){
             return this.jwtService.sign({
@@ -29,8 +29,15 @@ export class AuthService {
                 role: foundUser.role,
             });
            }else{
-            throw new UnauthorizedException('Credenciales invalidas')
+            throw new UnauthorizedException('Credenciales invalidas');
            }
 
+        }
+
+        async hashpassword(password: string){
+            const salt= await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            
+            return hashedPassword;
         }
 }
